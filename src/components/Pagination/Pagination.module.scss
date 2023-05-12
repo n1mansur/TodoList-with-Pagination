@@ -1,0 +1,27 @@
+.pagination {
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  & > input {
+    width: 45px;
+    padding: 5px;
+    background: transparent;
+    border: none;
+    -webkit-appearance: transparent;
+    appearance: transparent;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px #fff;
+  }
+  & > button {
+    padding: 5px;
+    border: none;
+    background: transparent;
+    color: #fff;
+    border-radius: 5px;
+    &:hover {
+      box-shadow: 0 0 5px #fff;
+    }
+  }
+}

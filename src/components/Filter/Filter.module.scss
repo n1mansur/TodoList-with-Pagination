@@ -1,0 +1,20 @@
+.Filter {
+  width: 80%;
+  margin-bottom: 10px;
+  & > span {
+    margin-right: 5px;
+  }
+  & > select {
+    background: transparent;
+    border: none;
+    transition: 0.5s all;
+    border-radius: 8px;
+    padding: 5px;
+    & > option {
+      background: transparent;
+    }
+    &:hover {
+      box-shadow: 0 0 5px #fff;
+    }
+  }
+}

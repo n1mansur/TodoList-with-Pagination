@@ -1,0 +1,57 @@
+// Form
+.addForm {
+  position: relative;
+  width: 100%;
+  padding: 10px 50px;
+  margin-bottom: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  @media (max-width: 600px) {
+    padding: 5px;
+  }
+  .formInp {
+    width: 100%;
+    height: 40px;
+    border: 0.5px solid #fff;
+    border-radius: 6px;
+    padding: 0 12px;
+    background: transparent;
+    color: #fff;
+    &::placeholder {
+      color: #fff;
+    }
+  }
+  & > button {
+    border: 0.5px solid #fff;
+    padding: 10px;
+    background: transparent;
+    border-radius: 6px;
+    transition: 0.5s all;
+    color: #fff;
+    &:hover {
+      box-shadow: 0 0 5px #fff;
+    }
+  }
+  .span {
+    position: absolute;
+    padding: 10px;
+    color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 0 5px red, inset 0 0 40px rgb(252, 77, 77);
+    opacity: 0;
+  }
+  .emptySpan {
+    animation: emptySpan 0.5s forwards;
+  }
+  @keyframes emptySpan {
+    0% {
+      top: 0;
+    }
+    100% {
+      opacity: 1;
+      top: -85%;
+    }
+  }
+}
