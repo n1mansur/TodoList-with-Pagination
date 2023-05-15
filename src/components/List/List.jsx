@@ -1,12 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import styles from './List.module.scss'
 import filteredByType from '../../functions/filteredByType'
 import Item from '../Item/Item'
 import Pagination from '../Pagination/Pagination'
+import { Context } from '../../App'
 
-export default function List({ type, todos, setTodos }) {
+export default function List() {
+  const { type, todos, setTodos } = useContext(Context)
+
   const [currentPage, setCurrentPage] = useState(1)
-  const [todosPerPage, setTodosPerPage] = useState(4) 
+  const [todosPerPage, setTodosPerPage] = useState(4)
 
   const lastPostIndex = currentPage * todosPerPage
   const firstPostIndex = lastPostIndex - todosPerPage
@@ -17,7 +20,14 @@ export default function List({ type, todos, setTodos }) {
         {filteredByType(type, todos)
           .slice(firstPostIndex, lastPostIndex)
           .map((el, i) => (
-            <Item el={el} id={i} key={el.id} setTodos={setTodos} />
+            <Item
+              el={el}
+              id={i}
+              key={el.id}
+              todos={todos}
+              setTodos={setTodos}
+              firstPostIndex={firstPostIndex}
+            />
           ))}
       </ul>
       <Pagination

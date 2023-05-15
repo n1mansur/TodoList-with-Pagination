@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './Pagination.module.scss'
 
 export default function Pagination({
@@ -22,7 +22,14 @@ export default function Pagination({
         onChange={(e) => setTodosPerPage(e.target.value)}
         max={4}
       />
-      {arr.map((el, i) => {
+      <button
+        onClick={() =>
+          setCurrentPage((old) => (currentPage > 1 ? old - 1 : old))
+        }
+      >
+        prev
+      </button>
+      {arr.slice(currentPage - 1, currentPage + 4).map((el, i) => {
         return (
           <button
             key={i}
@@ -33,6 +40,13 @@ export default function Pagination({
           </button>
         )
       })}
+      <button
+        onClick={() =>
+          setCurrentPage((old) => (currentPage < arr.length ? old + 1 : old))
+        }
+      >
+        next
+      </button>
     </div>
   )
 }

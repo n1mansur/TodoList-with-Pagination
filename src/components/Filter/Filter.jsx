@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styles from './Filter.module.scss'
+import { Context } from '../../App'
 
-export default function Filter({ setType }) {
+export default function Filter() {
+  const { setType } = useContext(Context)
   return (
     <div className={styles.Filter}>
       <span className={styles.span}>Filter by status:</span>

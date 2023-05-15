@@ -1,7 +1,10 @@
+import axios from 'axios'
 import styles from './Item.module.scss'
 import React, { useRef, useState } from 'react'
+import { url } from '../../App'
+import dateFormatter from '../../functions/dateFormater'
 
-export default function Item({ el, id, setTodos }) {
+export default function Item({ el, id, setTodos, firstPostIndex }) {
   const [changeValue, setChangeValue] = useState(el.todo)
   const [disabled, setDisabled] = useState(false)
   const inpRef = useRef()
@@ -16,9 +19,19 @@ export default function Item({ el, id, setTodos }) {
   }
   const done = () => {
     setDisabled(false)
-    setTodos((old) =>
-      old.map((v) => (v.id == el.id ? { ...v, todo: changeValue } : v))
-    )
+    axios
+      .put(`${url}/${el.id}`, {
+        todo: changeValue,
+        status: false,
+        createdTime: dateFormatter(new Date()),
+      })
+      .then((res) => {
+        axios(`${url}`).then((res) => {
+          setTodos(res.data)
+        })
+      })
+      .catch((e) => console.error(e))
+      .finally(() => {})
   }
   const checked = () => {
     setTodos((old) => {
@@ -27,9 +40,25 @@ export default function Item({ el, id, setTodos }) {
   }
 
   const deleteFn = () => {
-    setTodos((old) => {
-      return old.filter((v) => v.id != el.id)
+    axios({
+      method: 'delete',
+      url: `${url}/${el.id}`,
     })
+      .then((todo) => {
+        axios({
+          method: 'get',
+          url: `${url}`,
+        }).then((res) => {
+          console.log(res)
+          setTodos(res.data)
+        })
+      })
+      .catch((e) => console.error(e))
+      .finally(() => {})
+
+    //setTodos((old) => {
+    //  return old.filter((v) => v.id != el.id)
+    //})
   }
 
   const onChange = (e) => {
@@ -65,10 +94,9 @@ export default function Item({ el, id, setTodos }) {
       </label>
     </>
   )
-
   return (
     <li className={styles.item} id={el.id}>
-      <span className={styles.nth}>{id + 1}</span>
+      <span className={styles.nth}>{++firstPostIndex + id}</span>
       <div className={styles.item__section}>
         <div className={styles.date}>
           <span className={styles.hours}>
