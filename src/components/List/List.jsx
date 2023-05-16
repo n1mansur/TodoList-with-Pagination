@@ -9,10 +9,17 @@ export default function List() {
   const { type, todos, setTodos } = useContext(Context)
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [todosPerPage, setTodosPerPage] = useState(4)
+  const [count, setCount] = useState(4)
 
-  const lastPostIndex = currentPage * todosPerPage
-  const firstPostIndex = lastPostIndex - todosPerPage
+  const lastPostIndex = currentPage * count
+  const firstPostIndex = lastPostIndex - count
+  //console.log(currentPage, 'currentPage')
+  //console.log(count, 'count')
+  //console.log(lastPostIndex, 'currentPage * count')
+  //console.log(firstPostIndex, 'lastPostIndex - count')
+  //console.log(lastPostIndex, 'lastPostIndex')
+  //console.log(count, 'count')
+  //console.log('  ')
 
   return (
     <>
@@ -32,9 +39,9 @@ export default function List() {
       </ul>
       <Pagination
         totalTodos={filteredByType(type, todos).length}
-        todosPerPage={todosPerPage}
+        count={count}
         setCurrentPage={setCurrentPage}
-        setTodosPerPage={setTodosPerPage}
+        setCount={setCount}
         currentPage={currentPage}
       />
     </>

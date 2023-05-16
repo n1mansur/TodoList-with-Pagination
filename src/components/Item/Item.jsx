@@ -9,15 +9,20 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
   const [disabled, setDisabled] = useState(false)
   const inpRef = useRef()
   const edit = () => {
+    setTodos((el) => {
+      console.log(el)
+      return el
+    })
     setDisabled(true)
     inpRef.current.disabled = false
     inpRef.current.focus()
+    keyDownSave()
   }
   const cancel = () => {
     setDisabled(false)
     setChangeValue(el.todo)
   }
-  const done = () => {
+  const save = () => {
     setDisabled(false)
     axios
       .put(`${url}/${el.id}`, {
@@ -32,6 +37,35 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
       })
       .catch((e) => console.error(e))
       .finally(() => {})
+  }
+  const keyDownSave = (e) => {
+    document.addEventListener('keydown', (e) => {
+      if (e.code == 'Enter') {
+        console.log('e')
+        axios
+          .put(`${url}/${el.id}`, {
+            todo: changeValue,
+            status: false,
+            createdTime: dateFormatter(new Date()),
+          })
+          .then((res) => {
+            axios(`${url}`)
+              .then((res) => {
+                console.log(res.data)
+                setTodos(res.data)
+              })
+              .catch((e) => console.error(e))
+              .finally(() => {})
+          })
+          .catch((e) => console.error(e))
+          .finally(() => {})
+        setDisabled(false)
+      }
+      if (e.code == 'Escape') {
+        setDisabled(false)
+        setChangeValue(el.todo)
+      }
+    })
   }
   const checked = () => {
     setTodos((old) => {
@@ -67,7 +101,7 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
 
   const btns = disabled ? (
     <>
-      <button onClick={done}>
+      <button onClick={save}>
         <box-icon size="30px" color="#fff" name="check"></box-icon>
       </button>
       <button onClick={cancel}>

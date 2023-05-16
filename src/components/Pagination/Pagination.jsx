@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import styles from './Pagination.module.scss'
 
 export default function Pagination({
   totalTodos,
-  todosPerPage,
+  count,
   setCurrentPage,
-  setTodosPerPage,
+  setCount,
   currentPage,
 }) {
   let arr = []
 
-  for (let i = 1; i <= Math.ceil(totalTodos / todosPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(totalTodos / count); i++) {
     arr.push(i)
   }
 
@@ -18,8 +18,8 @@ export default function Pagination({
     <div className={styles.pagination}>
       <input
         type="number"
-        value={todosPerPage}
-        onChange={(e) => setTodosPerPage(e.target.value)}
+        value={count}
+        onChange={(e) => setCount(e.target.value)}
         max={4}
       />
       <button
