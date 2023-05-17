@@ -4,22 +4,17 @@ import filteredByType from '../../functions/filteredByType'
 import Item from '../Item/Item'
 import Pagination from '../Pagination/Pagination'
 import { Context } from '../../App'
+import { useSelector } from 'react-redux'
 
 export default function List() {
-  const { type, todos, setTodos } = useContext(Context)
+  const { type } = useContext(Context)
 
   const [currentPage, setCurrentPage] = useState(1)
   const [count, setCount] = useState(4)
 
   const lastPostIndex = currentPage * count
   const firstPostIndex = lastPostIndex - count
-  //console.log(currentPage, 'currentPage')
-  //console.log(count, 'count')
-  //console.log(lastPostIndex, 'currentPage * count')
-  //console.log(firstPostIndex, 'lastPostIndex - count')
-  //console.log(lastPostIndex, 'lastPostIndex')
-  //console.log(count, 'count')
-  //console.log('  ')
+  const todos = useSelector((state) => state.todos)
 
   return (
     <>
@@ -32,7 +27,6 @@ export default function List() {
               id={i}
               key={el.id}
               todos={todos}
-              setTodos={setTodos}
               firstPostIndex={firstPostIndex}
             />
           ))}

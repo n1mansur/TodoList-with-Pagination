@@ -3,16 +3,15 @@ import styles from './Item.module.scss'
 import React, { useRef, useState } from 'react'
 import { url } from '../../App'
 import dateFormatter from '../../functions/dateFormater'
+import { useDispatch } from 'react-redux'
+import { checkedACtionCreator, getActionCreate } from '../../redux/todoReducer'
 
 export default function Item({ el, id, setTodos, firstPostIndex }) {
+  const dispatch = useDispatch()
   const [changeValue, setChangeValue] = useState(el.todo)
   const [disabled, setDisabled] = useState(false)
   const inpRef = useRef()
   const edit = () => {
-    setTodos((el) => {
-      console.log(el)
-      return el
-    })
     setDisabled(true)
     inpRef.current.disabled = false
     inpRef.current.focus()
@@ -32,7 +31,7 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
       })
       .then((res) => {
         axios(`${url}`).then((res) => {
-          setTodos(res.data)
+          dispatch(getActionCreate(res.data))
         })
       })
       .catch((e) => console.error(e))
@@ -67,10 +66,8 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
       }
     })
   }
-  const checked = () => {
-    setTodos((old) => {
-      return old.map((v) => (v.id == el.id ? { ...v, status: !v.status } : v))
-    })
+  const checked = (id) => {
+    dispatch(checkedACtionCreator(id))
   }
 
   const deleteFn = () => {
@@ -83,16 +80,11 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
           method: 'get',
           url: `${url}`,
         }).then((res) => {
-          console.log(res)
-          setTodos(res.data)
+          dispatch(getActionCreate(res.data))
         })
       })
       .catch((e) => console.error(e))
       .finally(() => {})
-
-    //setTodos((old) => {
-    //  return old.filter((v) => v.id != el.id)
-    //})
   }
 
   const onChange = (e) => {
@@ -118,13 +110,21 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
     <>
       <label className={styles.label}>
         <box-icon size="30px" color="#fff" name="check"></box-icon>
-        <input onClick={checked} type="checkbox" style={{ display: 'none' }} />
+        <input
+          onClick={() => checked(el.id)}
+          type="checkbox"
+          style={{ display: 'none' }}
+        />
       </label>
     </>
   ) : (
     <>
       <label className={styles.label}>
-        <input onClick={checked} type="checkbox" style={{ display: 'none' }} />
+        <input
+          onClick={() => checked(el.id)}
+          type="checkbox"
+          style={{ display: 'none' }}
+        />
       </label>
     </>
   )
@@ -149,7 +149,7 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
         </div>
       </div>
       <div className={styles.item__btns}>
-        {btns}
+        {el.status ? <></> : btns}
         <button onClick={deleteFn} id="${v.id}">
           <box-icon size="30px" color="#fff" name="x"></box-icon>
         </button>
