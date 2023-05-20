@@ -1,17 +1,19 @@
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './Form.module.scss'
 import st from '../../App.module.scss'
 import dateFormatter from '../../functions/dateFormater'
-import axios from 'axios'
-import { Context, url } from '../../App'
-import { getActionCreate, searchActionCreate } from '../../redux/todoReducer'
-import { useDispatch, useSelector } from 'react-redux'
+import { todosService } from '../../TodoAPI/TodosService'
+import { useMutation, useQuery } from 'react-query'
 
 export default function Form() {
-  const dispatch = useDispatch()
+  const { data, refetch } = useQuery('getTodos', todosService.get)
+  const mutation = useMutation(todosService.post)
+  const searchMutation = useMutation(todosService.search)
+
   const [searchStatus, setSearchStatus] = useState(false)
   const submit = (e) => {
     e.preventDefault()
+    setSearchStatus(() => false)
     const value = e.target['todo'].value
     if (value) {
       const newTodo = {
@@ -20,25 +22,10 @@ export default function Form() {
         status: false,
         todo: value,
       }
-      axios
-        .post(url, newTodo)
-        .then(() => {
-          axios({
-            method: 'get',
-            url,
-          })
-            .then((todos) => {
-              dispatch(getActionCreate(todos.data))
-            })
-            .catch((e) => console.error(e))
-            .finally(() => {
-              console.log('get end')
-            })
-        })
-        .catch((e) => console.error(e))
-        .finally(() => {
-          console.log('add end')
-        })
+      mutation.mutate(newTodo)
+      setTimeout(() => {
+        refetch()
+      }, 300)
       e.target.reset()
     } else {
       document.getElementById('form__inp').classList.add(st.emptyInp)
@@ -55,17 +42,7 @@ export default function Form() {
   }
   const X = () => {
     setSearchStatus((old) => !old)
-    axios({
-      method: 'get',
-      url,
-    })
-      .then((todos) => {
-        dispatch(getActionCreate(todos.data))
-      })
-      .catch((e) => console.error(e))
-      .finally(() => {
-        console.log('get end')
-      })
+    refetch()
     document.getElementById('form__inp').value = ''
   }
   //****************************  search  ***************************************/
@@ -84,21 +61,6 @@ export default function Form() {
       }, 3000)
     } else {
       setSearchStatus((old) => !old)
-      axios({
-        method: 'get',
-        url,
-      })
-        .then((todos) => {
-          dispatch(
-            searchActionCreate(
-              todos.data.filter((el) => el.todo == value || el.id == value)
-            )
-          )
-        })
-        .catch((e) => console.error(e))
-        .finally(() => {
-          console.log('search end')
-        })
     }
   }
   return (

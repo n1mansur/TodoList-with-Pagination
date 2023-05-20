@@ -87,29 +87,38 @@
   }
 }
 .emptyInp {
-  animation: emptyInp 0.5s forwards;
+  //animation: emptyInp 0.5s forwards;
   box-shadow: 0 0 10px red;
   border: 0.5px solid transparent !important;
 }
-@keyframes emptyInp {
-  0% {
-    transform: scale(1, 1);
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: scale(1.2, 1.2);
-    transform: rotate(4deg);
-  }
-  50% {
-    transform: scale(1.5, 1.5);
-    transform: rotate(-4deg);
-  }
-  100% {
-    transform: scale(1, 1);
-    transform: rotate(0deg);
-  }
-}
+//@keyframes emptyInp {
+//  0% {
+//    transform: scale(1, 1);
+//    transform: rotate(0deg);
+//  }
+//  25% {
+//    transform: scale(1.2, 1.2);
+//    transform: rotate(4deg);
+//  }
+//  50% {
+//    transform: scale(1.5, 1.5);
+//    transform: rotate(-4deg);
+//  }
+//  100% {
+//    transform: scale(1, 1);
+//    transform: rotate(0deg);
+//  }
+//}
 
 .d-none {
   display: none;
+}
+.finally_status {
+  position: absolute;
+  top: 50px;
+  opacity: 0;
+  font-size: 50px;
+  z-index: 50;
+  border-radius: 6px;
+  padding: 10px;
 }

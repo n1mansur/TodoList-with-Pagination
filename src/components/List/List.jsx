@@ -4,23 +4,22 @@ import filteredByType from '../../functions/filteredByType'
 import Item from '../Item/Item'
 import Pagination from '../Pagination/Pagination'
 import { Context } from '../../App'
-import { useSelector } from 'react-redux'
+import { todosService } from '../../TodoAPI/TodosService'
+import { useQuery } from 'react-query'
 
 export default function List() {
   const { type } = useContext(Context)
-
   const [currentPage, setCurrentPage] = useState(1)
   const [count, setCount] = useState(4)
-
   const lastPostIndex = currentPage * count
   const firstPostIndex = lastPostIndex - count
-  const todos = useSelector((state) => state.todos)
+  const { data: todos } = useQuery('getTodos', todosService.get)
 
   return (
     <>
       <ul className={styles.list}>
         {filteredByType(type, todos)
-          .slice(firstPostIndex, lastPostIndex)
+          ?.slice(firstPostIndex, lastPostIndex)
           .map((el, i) => (
             <Item
               el={el}
@@ -32,7 +31,7 @@ export default function List() {
           ))}
       </ul>
       <Pagination
-        totalTodos={filteredByType(type, todos).length}
+        totalTodos={filteredByType(type, todos)?.length}
         count={count}
         setCurrentPage={setCurrentPage}
         setCount={setCount}

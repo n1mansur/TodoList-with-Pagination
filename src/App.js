@@ -5,42 +5,27 @@ import Form from './components/Form/Form'
 import Filter from './components/Filter/Filter'
 import List from './components/List/List'
 import OnOffButton from './components/OnOffButton/OnOffButton'
-import axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  addACtionCreator,
-  clearACtionCreator,
-  getActionCreate,
-} from './redux/todoReducer'
+import { useMutation, useQuery } from 'react-query'
+import { todosService } from './TodoAPI/TodosService'
 export const url = 'https://644131f3792fe886a8a0f728.mockapi.io/todos'
 
 export const Context = createContext()
 
 export default function App() {
-  const dispatch = useDispatch()
-  useEffect(() => {
-    axios({
-      method: 'get',
-      url,
-    })
-      .then((todos) => {
-        dispatch(getActionCreate(todos.data))
-      })
-      .catch((e) => console.error(e))
-      .finally(() => {
-        console.log('get end')
-      })
-  }, [])
-
+  const { data, refetch } = useQuery('getTodos', todosService.get)
+  const clearMutate = useMutation(todosService.clear)
   const [type, setType] = useState('all')
-
   const clearAll = () => {
-    dispatch(clearACtionCreator())
+    clearMutate.mutate(data)
+    setTimeout(() => {
+      refetch()
+    }, 5000)
   }
 
   return (
     <Context.Provider value={{ setType, type }}>
       <div className={styles.wrapper} id="wrapper">
+        <span id="finally_status" className={styles.finally_status}></span>
         <div className={styles.wrapper__container}>
           <div className={styles.title}>
             <h1 data-text="TODO LIST APP">TODO LIST APP</h1>

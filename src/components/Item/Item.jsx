@@ -1,13 +1,14 @@
-import axios from 'axios'
 import styles from './Item.module.scss'
 import React, { useRef, useState } from 'react'
-import { url } from '../../App'
 import dateFormatter from '../../functions/dateFormater'
-import { useDispatch } from 'react-redux'
-import { checkedACtionCreator, getActionCreate } from '../../redux/todoReducer'
+import { todosService } from '../../TodoAPI/TodosService'
+import { useMutation, useQuery } from 'react-query'
 
-export default function Item({ el, id, setTodos, firstPostIndex }) {
-  const dispatch = useDispatch()
+export default function Item({ el, id, firstPostIndex }) {
+  const { refetch } = useQuery('getTodos', todosService.get)
+  const saveMutation = useMutation(todosService.put)
+  const deleteMutation = useMutation(todosService.delete)
+  const checkedMutation = useMutation(todosService.checked)
   const [changeValue, setChangeValue] = useState(el.todo)
   const [disabled, setDisabled] = useState(false)
   const inpRef = useRef()
@@ -15,76 +16,51 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
     setDisabled(true)
     inpRef.current.disabled = false
     inpRef.current.focus()
-    keyDownSave()
+    const item = document.getElementById(el.id)
+    item.classList.add(styles.activeItem)
   }
   const cancel = () => {
+    const item = document.getElementById(el.id)
+    item.classList.remove(styles.activeItem)
     setDisabled(false)
     setChangeValue(el.todo)
   }
   const save = () => {
     setDisabled(false)
-    axios
-      .put(`${url}/${el.id}`, {
-        todo: changeValue,
-        status: false,
-        createdTime: dateFormatter(new Date()),
-      })
-      .then((res) => {
-        axios(`${url}`).then((res) => {
-          dispatch(getActionCreate(res.data))
-        })
-      })
-      .catch((e) => console.error(e))
-      .finally(() => {})
-  }
-  const keyDownSave = (e) => {
-    document.addEventListener('keydown', (e) => {
-      if (e.code == 'Enter') {
-        console.log('e')
-        axios
-          .put(`${url}/${el.id}`, {
-            todo: changeValue,
-            status: false,
-            createdTime: dateFormatter(new Date()),
-          })
-          .then((res) => {
-            axios(`${url}`)
-              .then((res) => {
-                console.log(res.data)
-                setTodos(res.data)
-              })
-              .catch((e) => console.error(e))
-              .finally(() => {})
-          })
-          .catch((e) => console.error(e))
-          .finally(() => {})
-        setDisabled(false)
-      }
-      if (e.code == 'Escape') {
-        setDisabled(false)
-        setChangeValue(el.todo)
-      }
+    const item = document.getElementById(el.id)
+    item.classList.remove(styles.activeItem)
+    saveMutation.mutate({
+      id: el.id,
+      todo: changeValue,
+      status: false,
+      createdTime: dateFormatter(new Date()),
     })
-  }
-  const checked = (id) => {
-    dispatch(checkedACtionCreator(id))
+    setTimeout(() => {
+      refetch()
+    }, 300)
   }
 
-  const deleteFn = () => {
-    axios({
-      method: 'delete',
-      url: `${url}/${el.id}`,
+  const checked = (id) => {
+    const item = document.getElementById(el.id)
+    item.classList.remove(styles.activeItem)
+    checkedMutation.mutate({
+      ...el,
+      id: el.id,
+      status: !el.status,
+      createdTime: dateFormatter(new Date()),
     })
-      .then((todo) => {
-        axios({
-          method: 'get',
-          url: `${url}`,
-        }).then((res) => {
-          dispatch(getActionCreate(res.data))
-        })
-      })
-      .catch((e) => console.error(e))
-      .finally(() => {})
+    setTimeout(() => {
+      refetch()
+    }, 300)
+  }
+
+  const deleteFn = (id) => {
+    const item = document.getElementById(el.id)
+    item.classList.remove(styles.activeItem)
+    deleteMutation.mutate(id)
+    setTimeout(() => {
+      refetch()
+    }, 300)
   }
 
   const onChange = (e) => {
@@ -150,7 +126,7 @@ export default function Item({ el, id, setTodos, firstPostIndex }) {
       </div>
       <div className={styles.item__btns}>
         {el.status ? <></> : btns}
-        <button onClick={deleteFn} id="${v.id}">
+        <button onClick={() => deleteFn(el.id)} id="${v.id}">
           <box-icon size="30px" color="#fff" name="x"></box-icon>
         </button>
       </div>

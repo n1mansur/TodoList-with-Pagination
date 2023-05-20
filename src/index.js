@@ -1,18 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { Provider } from 'react-redux'
-import { combineReducers, createStore } from 'redux'
-import { todoReducer } from './redux/todoReducer'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 
-const allReducer = combineReducers({ todos: todoReducer })
-
-const store = createStore(allReducer)
+const queryClient = new QueryClient()
 
 root.render(
-  <Provider store={store}>
+  <QueryClientProvider client={queryClient}>
     <App />
-  </Provider>
+  </QueryClientProvider>
 )

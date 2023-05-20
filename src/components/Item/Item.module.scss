@@ -10,6 +10,7 @@
   justify-content: space-between;
   align-items: center;
   background: #0d0d0d33;
+  transition: 0.5s all;
   &:hover {
     box-shadow: 0 0 5px #fff;
   }
@@ -79,4 +80,8 @@
       }
     }
   }
+}
+.activeItem {
+  box-shadow: 0 0 10px#fff;
+  transform: scale(1.02, 1.02);
 }
