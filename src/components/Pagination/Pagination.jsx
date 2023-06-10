@@ -23,23 +23,41 @@ export default function Pagination({
         max={4}
       />
       <button
-        onClick={() =>
-          setCurrentPage((old) => (currentPage > 1 ? old - 1 : old))
-        }
+        onClick={() => setCurrentPage((old) => (old > 1 ? old - 1 : old))}
       >
         prev
       </button>
-      {arr.slice(currentPage - 1, currentPage + 4).map((el, i) => {
-        return (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(el)}
-            className={el == currentPage ? 'active' : ''}
-          >
-            {el}
-          </button>
-        )
-      })}
+      <div
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '10px',
+        }}
+      >
+        {arr
+          .slice(
+            currentPage == 3
+              ? currentPage - 3
+              : currentPage == 2
+              ? currentPage - 2
+              : currentPage == 1
+              ? currentPage - 1
+              : currentPage - 3,
+            currentPage + 2
+          )
+          .map((el, i) => {
+            return (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(el)}
+                className={el == currentPage ? 'active' : ''}
+              >
+                {el}
+              </button>
+            )
+          })}
+      </div>
       <button
         onClick={() =>
           setCurrentPage((old) => (currentPage < arr.length ? old + 1 : old))

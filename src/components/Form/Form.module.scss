@@ -21,7 +21,6 @@
     padding: 0 12px;
     background: transparent;
     color: #fff;
-    z-index: 2;
     &::placeholder {
       color: #fff;
     }
@@ -34,7 +33,6 @@
     transition: 0.5s all;
     color: #fff;
     position: relative;
-    z-index: 2;
     height: 40px;
 
     &:hover {
@@ -48,7 +46,6 @@
     border-radius: 6px;
     box-shadow: 0 0 5px red, inset 0 0 40px rgb(252, 77, 77);
     opacity: 0;
-    z-index: 1;
   }
   .emptySpan {
     animation: emptySpan 0.5s forwards;
@@ -72,7 +69,6 @@
   border-radius: 6px;
 
   .search {
-    z-index: 2;
     border: none;
     padding: 5px;
     background: transparent;
@@ -87,7 +83,6 @@
     }
   }
   .x {
-    z-index: 2;
     border: none;
     padding: 5px;
     background: transparent;

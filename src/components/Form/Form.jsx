@@ -3,13 +3,30 @@ import styles from './Form.module.scss'
 import st from '../../App.module.scss'
 import dateFormatter from '../../functions/dateFormater'
 import { todosService } from '../../TodoAPI/TodosService'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
+import { toast } from 'react-toastify'
 
-export default function Form() {
-  const { data, refetch } = useQuery('getTodos', todosService.get)
-  const mutation = useMutation(todosService.post)
-  const searchMutation = useMutation(todosService.search)
-
+export default function Form({ setSearchState }) {
+  const client = useQueryClient()
+  const { mutate: searchTodo } = useMutation(todosService.get, {
+    onSuccess: (res) => {
+      res.length > 0
+        ? setSearchState(res)
+        : toast.warning('NOT FOUND', {
+            position: 'bottom-center',
+            autoClose: 4000,
+            hideProgressBar: true,
+            draggable: true,
+            theme: 'colored',
+          })
+    },
+  })
+  const mutate = useMutation(todosService.post, {
+    onSuccess: () => {
+      client.invalidateQueries('getTodos', todosService.get)
+    },
+  })
+  //console.log(mutate)
   const [searchStatus, setSearchStatus] = useState(false)
   const submit = (e) => {
     e.preventDefault()
@@ -22,28 +39,29 @@ export default function Form() {
         status: false,
         todo: value,
       }
-      mutation.mutate(newTodo)
-      setTimeout(() => {
-        refetch()
-      }, 300)
+      mutate.mutate(newTodo)
       e.target.reset()
+      toast.success('TODO ADDED', {
+        position: 'bottom-center',
+        autoClose: 4000,
+        hideProgressBar: true,
+        draggable: true,
+        theme: 'colored',
+      })
     } else {
       document.getElementById('form__inp').classList.add(st.emptyInp)
       document.getElementById('form__inp').placeholder = 'Enter your todo'
-      document.getElementById('span').classList.add(styles.emptySpan)
       setTimeout(() => {
         document.getElementById('form__inp').placeholder = 'Text input'
         document.getElementById('form__inp').classList.remove(st.emptyInp)
       }, 1200)
-      setTimeout(() => {
-        document.getElementById('span').classList.remove(styles.emptySpan)
-      }, 3000)
     }
   }
   const X = () => {
     setSearchStatus((old) => !old)
-    refetch()
     document.getElementById('form__inp').value = ''
+    //client.invalidateQueries('getTodos', todosService.get)
+    setSearchState([])
   }
   //****************************  search  ***************************************/
   const search = () => {
@@ -51,16 +69,13 @@ export default function Form() {
     if (!value) {
       document.getElementById('form__inp').classList.add(st.emptyInp)
       document.getElementById('form__inp').placeholder = 'Enter your TEXT'
-      document.getElementById('span').classList.add(styles.emptySpan)
       setTimeout(() => {
         document.getElementById('form__inp').placeholder = 'Text input'
         document.getElementById('form__inp').classList.remove(st.emptyInp)
       }, 1200)
-      setTimeout(() => {
-        document.getElementById('span').classList.remove(styles.emptySpan)
-      }, 3000)
     } else {
       setSearchStatus((old) => !old)
+      searchTodo(value)
     }
   }
   return (
@@ -87,9 +102,6 @@ export default function Form() {
           </button>
         )}
       </label>
-      <span className={styles.span} id="span">
-        ENTER YOUR TEXT!
-      </span>
       <button type="submit">ADD</button>
     </form>
   )

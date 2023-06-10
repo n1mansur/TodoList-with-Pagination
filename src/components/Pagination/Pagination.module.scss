@@ -1,6 +1,9 @@
 .pagination {
+  max-width: 350px;
+  width: 100%;
   min-width: 150px;
   display: flex;
+  justify-content: space-between;
   gap: 10px;
   padding: 10px;
   & > input {
@@ -14,7 +17,8 @@
     border-radius: 5px;
     box-shadow: 0 0 5px #fff;
   }
-  & > button {
+  & > button,
+  & > div > button {
     padding: 5px;
     border: none;
     background: transparent;

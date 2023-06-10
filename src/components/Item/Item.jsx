@@ -2,16 +2,27 @@ import styles from './Item.module.scss'
 import React, { useRef, useState } from 'react'
 import dateFormatter from '../../functions/dateFormater'
 import { todosService } from '../../TodoAPI/TodosService'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
+import { ToastContainer, toast } from 'react-toastify'
 
 export default function Item({ el, id, firstPostIndex }) {
-  const { refetch } = useQuery('getTodos', todosService.get)
-  const saveMutation = useMutation(todosService.put)
-  const deleteMutation = useMutation(todosService.delete)
-  const checkedMutation = useMutation(todosService.checked)
   const [changeValue, setChangeValue] = useState(el.todo)
   const [disabled, setDisabled] = useState(false)
   const inpRef = useRef()
+  const client = useQueryClient()
+  const saveMutation = useMutation(todosService.put)
+  const deleteMutation = useMutation(todosService.delete, {
+    onSuccess: () => {
+      toast.success('DELETED', {
+        position: 'bottom-center',
+        autoClose: 2000,
+        hideProgressBar: true,
+        draggable: true,
+        theme: 'colored',
+        style: { background: 'red' },
+      })
+    },
+  })
   const edit = () => {
     setDisabled(true)
     inpRef.current.disabled = false
@@ -36,21 +47,37 @@ export default function Item({ el, id, firstPostIndex }) {
       createdTime: dateFormatter(new Date()),
     })
     setTimeout(() => {
-      refetch()
+      client.invalidateQueries('getTodos', todosService.get)
+      toast.success('SAVED', {
+        position: 'bottom-center',
+        autoClose: 2000,
+        hideProgressBar: true,
+        draggable: true,
+        theme: 'colored',
+        style: { background: 'green' },
+      })
     }, 300)
   }
 
   const checked = (id) => {
     const item = document.getElementById(el.id)
     item.classList.remove(styles.activeItem)
-    checkedMutation.mutate({
+    saveMutation.mutate({
       ...el,
       id: el.id,
       status: !el.status,
       createdTime: dateFormatter(new Date()),
     })
     setTimeout(() => {
-      refetch()
+      client.invalidateQueries('getTodos', todosService.get)
+      toast.success('CHECKED', {
+        position: 'bottom-center',
+        autoClose: 2000,
+        hideProgressBar: true,
+        draggable: true,
+        theme: 'colored',
+        style: { background: 'blue' },
+      })
     }, 300)
   }
 
@@ -59,7 +86,7 @@ export default function Item({ el, id, firstPostIndex }) {
     item.classList.remove(styles.activeItem)
     deleteMutation.mutate(id)
     setTimeout(() => {
-      refetch()
+      client.invalidateQueries('getTodos', todosService.get)
     }, 300)
   }
 
