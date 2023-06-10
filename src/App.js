@@ -41,8 +41,8 @@ export default function App() {
             </button>*/}
           </div>
         </div>
-        <ToastContainer position="bottom-center" />
       </div>
+        <ToastContainer position="bottom-center" />
     </Context.Provider>
   )
 }

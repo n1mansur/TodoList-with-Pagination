@@ -18,6 +18,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    @media (max-width: 450px) {
+      padding: 0px;
+    }
   }
 }
 .title {
@@ -51,24 +54,26 @@
   }
 }
 .hero {
+  position: relative;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
+  gap: 5px;
   background: linear-gradient(
     140deg,
     rgba(113, 176, 214, 1) 0%,
     rgba(170, 98, 185, 1) 100%
   );
-  width: 500px;
-  min-height: 400px;
+  max-width: 500px;
+  width: 100%;
+  min-height: 450px;
   border-radius: 10px;
   margin: 20px;
   box-shadow: 0 0 40px rgba(113, 176, 214, 1);
   @media (max-width: 600px) {
     border-radius: 6px;
-    width: 100%;
   }
   @media (max-height: 480px) {
     min-height: 200px;
